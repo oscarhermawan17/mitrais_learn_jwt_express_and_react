@@ -1,26 +1,71 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from 'axios'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+  constructor(){
+    super()
+    this.state = {
+      data:{
+        token: "-",
+        message_response: "Pending",
+        status: "pending",
+      },
+      decodedToken:{
+        username: '', 
+        iat: 0, 
+        exp: 0,
+      }
+    }
+  }
+
+  componentDidMount(){
+    axios.get('http://127.0.0.1:3001/login')
+    .then(response =>{
+      this.setState({data:response.data})
+    })
+    .catch(response =>{
+      this.setState({data: {...this.state.data, status:"error"} })
+    })
+  }
+
+  sendToken(){
+    axios.post('http://127.0.0.1:3001/login', { token : this.state.data.token})
+    .then(response =>{
+      this.setState({decodedToken:response.data})
+    })
+    .catch(response =>{
+      this.setState({decodedToken:response.data})
+    })
+  }
+
+  render = () => (
+    this.state.data.status === "pending" ? 
+      <div className="App">
+        <header>
+          Header
+        </header>
+        <article>
+          {this.state.data.status}<br/>
+        </article>
+      </div> : 
+      <div className="App">
+        <header>
+          Header
+        </header>
+        <article>
+          STATUS : {this.state.data.status} <br/>
+          TOKEN : {this.state.data.token} <br/>
+          <button onClick={() => this.sendToken()}>Send token</button>
+          <br/><br/>
+          Decoded, klik Send token button <br/>
+          username : {this.state.decodedToken.username} <br/>
+          iat : {this.state.decodedToken.iat} <br/>
+          exp : {this.state.decodedToken.exp} <br/>
+        </article>
+      </div>
+  )
 }
+    
 
 export default App;
