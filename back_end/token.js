@@ -4,12 +4,14 @@ const jwt = require('jsonwebtoken');
 
 // get token
 router.get('/', function (req, res) {
-    token = jwt.sign({username:"Oscar" }, "rahasia", { expiresIn: 3600*1 })
+    token = jwt.sign({username:"Oscar" }, process.env.RAHASIA, { expiresIn: 3600*1 })
     res.send({status:"success", message_response:"Berhasil", token })
 })
 
+
+//decoded token
 router.post('/', (req,res) => {
-    jwt.verify(req.body.token, 'rahasia', (err, decoded) =>
+    jwt.verify(req.body.token, process.env.RAHASIA, (err, decoded) =>
         // console.log('token = ', decoded)
         res.send(decoded)
     );
